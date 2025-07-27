@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名称组合生成器 - 食品品牌×人物名称</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1', // 主色调：紫色系，代表创意和乐趣
+                        secondary: '#f97316', // 辅助色：橙色，代表活力
+                        accent: '#10b981', // 强调色：绿色
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .animate-float {
+                animation: float 3s ease-in-out infinite;
+            }
+            .animate-pulse-slow {
+                animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            .notification {
+                animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes fadein {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+        
+        @keyframes fadeout {
+            from { bottom: 30px; opacity: 1; }
+            to { bottom: 0; opacity: 0; }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gradient-to-br from-light to-blue-50 min-h-screen text-dark">
+    <!-- 粒子背景容器 -->
+    <div id="particles-js" class="fixed inset-0 z-0 opacity-30"></div>
+    
+    <!-- 通知提示 -->
+    <div id="notification" class="hidden fixed right-4 bottom-4 bg-dark text-white px-4 py-2 rounded-lg shadow-lg z-50 notification">
+        <span id="notificationText"></span>
+    </div>
+    
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <!-- 页面标题 -->
+        <header class="text-center mb-12 mt-6">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-primary mb-4 text-shadow">
+                <i class="fa fa-random mr-3 text-secondary"></i>名称组合生成器
+            </h1>
+            <p class="text-gray-600 max-w-2xl mx-auto text-lg">
+                将食品品牌与历史人物、王者荣耀角色创意结合，生成有趣的组合名称
+            </p>
+        </header>
+        
+        <!-- 主要内容区 -->
+        <main class="max-w-4xl mx-auto">
+            <!-- 输入区域 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-8 transform transition-all duration-300 hover:shadow-xl">
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="flex-1 relative">
+                        <label for="inputName" class="block text-sm font-medium text-gray-700 mb-1">输入人物名称或食品品牌</label>
+                        <input 
+                            type="text" 
+                            id="inputName" 
+                            placeholder="例如：小乔 或 旺仔" 
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none"
+                        >
+                        <div class="absolute right-3 top-10 text-gray-400">
+                            <i class="fa fa-search"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <button 
+                            id="generateBtn" 
+                            class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2 shadow-md hover:shadow-lg"
+                        >
+                            <i class="fa fa-magic"></i>
+                            <span>随机生成</span>
+                        </button>
+                        <button 
+                            id="clearBtn" 
+                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium px-4 py-3 rounded-lg transition-all"
+                        >
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-2">
+                    <span class="text-sm text-gray-500">热门推荐：</span>
+                    <button class="text-sm bg-blue-100 text-primary px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">旺仔</button>
+                    <button class="text-sm bg-blue-100 text-primary px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">小乔</button>
+                    <button class="text-sm bg-blue-100 text-primary px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">孔子</button>
+                    <button class="text-sm bg-blue-100 text-primary px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">李白</button>
+                    <button class="text-sm bg-blue-100 text-primary px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">麦当劳</button>
+                </div>
+            </div>
+            
+            <!-- 结果展示区域 -->
+            <div id="resultArea" class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-6 md:p-10 text-center mb-10 min-h-[200px] flex flex-col items-center justify-center">
+                <div id="initialMessage" class="text-gray-500 max-w-md">
+                    <i class="fa fa-lightbulb-o text-4xl text-secondary mb-4 animate-pulse-slow"></i>
+                    <p>输入一个人物名称或食品品牌，或者直接点击"随机生成"按钮，获取有趣的组合名称</p>
+                </div>
+                
+                <div id="resultContainer" class="hidden w-full">
+                    <div id="resultName" class="text-[clamp(2.5rem,8vw,4rem)] font-bold text-primary mb-6 transition-all duration-500 transform"></div>
+                    
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <div class="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
+                            <p class="text-sm text-gray-500">食品品牌</p>
+                            <p id="foodBrand" class="font-medium"></p>
+                        </div>
+                        <div class="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md">
+                            <p class="text-sm text-gray-500">人物名称</p>
+                            <p id="characterName" class="font-medium"></p>
+                        </div>
+                    </div>
+                    
+                    <button id="saveBtn" class="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+                        <i class="fa fa-heart-o"></i>
+                        <span>收藏这个组合</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 历史记录和收藏 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <!-- 最近生成 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-history text-primary mr-2"></i>
+                        最近生成
+                    </h2>
+                    <div id="historyList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                        <p class="text-gray-500 text-center italic py-4">暂无记录</p>
+                    </div>
+                </div>
+                
+                <!-- 我的收藏 -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fa fa-star text-secondary mr-2"></i>
+                        我的收藏
+                    </h2>
+                    <div id="favoritesList" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                        <p class="text-gray-500 text-center italic py-4">暂无收藏</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数据统计 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-12">
+                <h2 class="text-xl font-bold mb-6 text-center">数据统计</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div class="bg-blue-50 p-4 rounded-xl">
+                        <p class="text-gray-500 mb-1">历史人物</p>
+                        <p id="historicalCount" class="text-2xl font-bold text-primary">0</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl">
+                        <p class="text-gray-500 mb-1">王者荣耀角色</p>
+                        <p id="gameCharacterCount" class="text-2xl font-bold text-primary">0</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-xl">
+                        <p class="text-gray-500 mb-1">食品品牌</p>
+                        <p id="foodBrandCount" class="text-2xl font-bold text-primary">0</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-500 text-sm py-6">
+            <p>名称组合生成器 &copy; 2023 | 仅供娱乐</p>
+        </footer>
+    </div>
+    
+    <!-- 粒子效果库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // 从本地存储加载数据或使用默认数据
+        let historicalFigures = JSON.parse(localStorage.getItem('historicalFigures')) || [
+            // 著名皇帝（只保留本名）
+            "黄帝", "炎帝", "尧", "舜", "禹",
+            "启", "桀", "汤", "纣",
+            "姬昌", "姬发", "姬诵", "姬宫湦",
+            "小白", "重耳", "任好", "熊旅",
+            "嬴政", "胡亥",
+            "刘邦", "刘恒", "刘启", "刘彻",
+            "刘弗陵", "刘询", "刘奭", "刘骜",
+            "刘秀", "刘庄", "刘炟", "刘协",
+            "曹操", "曹丕", "曹叡",
+            "刘备", "刘禅",
+            "孙权", "孙休", "孙皓",
+            "司马炎", "司马衷", "司马睿",
+            "杨坚", "杨广",
+            "李渊", "李世民", "李治", "武则天",
+            "李隆基", "李亨", "李豫", "李纯",
+            "赵匡胤", "赵光义", "赵恒", "赵祯",
+            "赵顼", "赵佶", "赵构", "赵昚",
+            "耶律阿保机", "耶律德光",
+            "完颜阿骨打", "完颜雍",
+            "铁木真", "窝阔台", "忽必烈", "妥懽帖睦尔",
+            "朱元璋", "朱棣", "朱高炽", "朱瞻基",
+            "朱祁镇", "朱见深", "朱祐樘", "朱厚熜",
+            "朱翊钧", "朱由检",
+            "努尔哈赤", "皇太极", "福临", "玄烨",
+            "胤禛", "弘历", "颙琰", "旻宁",
+            "奕詝", "载淳", "载湉", "溥仪",
+            
+            // 先秦诸子
+            "孔子", "孟子", "老子", "庄子", "墨子", "韩非子",
+            "荀子", "孙子", "鬼谷子", "列子", "杨朱", "公孙龙",
+            
+            // 文臣谋士
+            "姜子牙", "管仲", "晏婴", "孙武", "吴起", "商鞅", "苏秦",
+            "张仪", "范雎", "吕不韦", "李斯", "萧何", "张良", "陈平",
+            "曹参", "霍光", "诸葛亮", "荀彧", "郭嘉", "贾诩", "房玄龄",
+            "杜如晦", "魏征", "狄仁杰", "姚崇", "宋璟", "王安石", "司马光",
+            "寇准", "包拯", "文天祥", "刘伯温", "张居正", "海瑞",
+            
+            // 武将名将
+            "白起", "王翦", "廉颇", "李牧", "蒙恬", "项羽", "韩信",
+            "卫青", "霍去病", "李广", "关羽", "张飞", "赵云", "马超",
+            "黄忠", "吕布", "典韦", "许褚", "张辽", "周瑜", "鲁肃",
+            "吕蒙", "陆逊", "尉迟恭", "秦琼", "程咬金", "薛仁贵", "郭子仪",
+            "岳飞", "韩世忠", "成吉思汗", "徐达", "常遇春", "戚继光",
+            
+            // 文人墨客
+            "屈原", "宋玉", "司马相如", "扬雄", "班固", "蔡邕", "蔡文姬",
+            "陶渊明", "谢灵运", "王勃", "杨炯", "卢照邻", "骆宾王", "贺知章",
+            "王之涣", "孟浩然", "王昌龄", "王维", "李白", "杜甫", "高适",
+            "岑参", "孟郊", "贾岛", "韩愈", "柳宗元", "白居易", "元稹",
+            "刘禹锡", "李贺", "杜牧", "李商隐", "温庭筠", "李煜", "柳永",
+            "晏殊", "欧阳修", "苏洵", "苏轼", "苏辙", "王安石", "曾巩",
+            "黄庭坚", "秦观", "周邦彦", "李清照", "陆游", "杨万里", "范成大",
+            "辛弃疾", "姜夔", "文天祥", "关汉卿", "王实甫", "马致远", "白朴",
+            "施耐庵", "罗贯中", "吴承恩", "曹雪芹",
+            
+            // 其他著名人物
+            "西施", "王昭君", "貂蝉", "杨玉环", "褒姒", "妲己", "赵飞燕",
+            "文成公主", "玄奘", "鉴真", "一行", "张衡", "蔡伦", "祖冲之",
+            "毕昇", "沈括", "李时珍", "徐霞客", "黄道婆", "王羲之", "顾恺之",
+            "吴道子", "张旭", "颜真卿", "柳公权", "欧阳询", "怀素", "米芾",
+            "董源", "巨然", "李成", "范宽", "郭熙", "李唐", "刘松年",
+            "马远", "夏圭", "黄公望", "吴镇", "倪瓒", "王蒙", "赵孟頫"
+        ];
+        
+        let gameCharacters = JSON.parse(localStorage.getItem('gameCharacters')) || [
+            "小乔", "周瑜", "大乔", "孙策", "李白", "韩信",
+            "貂蝉", "吕布", "孙悟空", "猪八戒", "唐僧", "沙和尚",
+            "亚瑟", "妲己", "后羿", "鲁班七号", "安琪拉", "甄姬",
+            "程咬金", "兰陵王", "花木兰", "铠", "赵云", "关羽",
+            "张飞", "马超", "黄忠", "诸葛亮", "司马懿", "元歌",
+            "芈月", "武则天", "嬴政", "杨玉环", "西施", "王昭君",
+            "云中君", "瑶", "盘古", "嫦娥", "上官婉儿", "李信",
+            "沈梦溪", "伽罗", "盾山", "米莱狄", "狂铁", "弈星",
+            "裴擒虎", "公孙离", "明世隐", "女娲", "梦奇", "苏烈",
+            "百里玄策", "百里守约", "鬼谷子", "干将莫邪", "东皇太一",
+            "哪吒", "太乙真人", "蔡文姬", "雅典娜", "杨戬", "成吉思汗",
+            "钟馗", "虞姬", "李元芳", "刘备", "牛魔", "橘右京",
+            "娜可露露", "不知火舞", "张良", "老夫子", "达摩",
+            "狄仁杰", "马可波罗", "宫本武藏", "典韦", "曹操", "夏侯惇",
+            "白起", "扁鹊", "孙膑", "钟无艳", "阿轲", "高渐离",
+            "刘禅", "庄周", "孙尚香", "廉颇", "司空震", "云缨",
+            "蒙恬", "曜", "帝俊", "龙且", "安禄山", "盖聂",
+            "八神庵", "夏洛特", "镜", "吕蒙", "晟", "澜",
+            "蒙犽", "戈娅", "亚连", "海月", "桑启", "海诺",
+            "莱西奥", "姬小满", "朵莉亚", "金蝉"
+        ];
+        
+        let foodBrands = JSON.parse(localStorage.getItem('foodBrands')) || [
+            // 乳制品与乳饮料
+            "伊利", "蒙牛", "光明", "君乐宝", "三元", "完达山", "新希望", 
+            "圣牧", "辉山", "明治", "简爱", "认养一头牛", "阿尔乐", "爱他美", 
+            "美赞臣", "惠氏", "伊利金领冠", "蒙牛瑞哺恩", "君乐宝优萃", "飞鹤", 
+            "雀巢", "美素佳儿", "雅培", "奶酪博士", "百吉福", "安佳", "总统", "妙可蓝多",
+            
+            // 饮料
+            "可口可乐", "百事可乐", "雪碧", "芬达", "美年达", "七喜", "北冰洋", "大窑饮品",
+            "农夫山泉", "娃哈哈", "百岁山", "怡宝", "华润怡宝", "冰露", "5100西藏冰川", "依云", "巴黎水",
+            "康师傅冰红茶", "统一阿萨姆奶茶", "东方树叶", "味全每日C", "汇源", "椰树牌椰汁", 
+            "元气森林", "喜茶", "奈雪的茶", "霸王茶姬", "东鹏特饮", "红牛", "脉动", "尖叫", 
+            "Monster", "外星人电解质水", "雀巢", "星巴克", "瑞幸", "Manner", "OATLY", "星期零",
+            
+            // 零食与烘焙
+            "乐事", "上好佳", "旺旺仙贝", "卫龙辣条", "妙脆角", "奇多", "多力多滋",
+            "三只松鼠", "良品铺子", "百草味", "洽洽", "沃隆", "来伊份",
+            "徐福记", "阿尔卑斯", "德芙", "费列罗", "好时", "瑞士莲", "士力架", "M&M's", "箭牌",
+            "达利园", "盼盼", "奥利奥", "趣多多", "太平", "嘉士利", "皇冠曲奇", "美心", "85度C", "好利来", "巴黎贝甜",
+            "双汇", "雨润", "金锣", "周黑鸭", "紫燕百味鸡", "王小卤", "麻辣王子",
+            "钟薛高", "王小卤", "王饱饱", "自嗨锅", "满小饱",
+            
+            // 快餐与餐饮连锁
+            "麦当劳", "肯德基", "必胜客", "汉堡王", "德克士", "华莱士", "塔斯汀", "萨莉亚", "赛百味", "达美乐",
+            "老乡鸡", "真功夫", "永和大王", "味千拉面", "乡村基",
+            "星巴克", "瑞幸", "Manner", "喜茶", "霸王茶姬", "奈雪的茶", "茶颜悦色",
+            
+            // 速冻与方便食品
+            "思念", "三全", "安井", "海霸王", "湾仔码头", "圣农",
+            "康师傅", "统一", "今麦郎", "白象", "日清", "合味道",
+            "自嗨锅", "莫小仙", "食族人",
+            
+            // 调味品与粮油
+            "海天", "李锦记", "厨邦", "千禾", "加加", "东古", "欣和", "鲁花", "老干妈", "王守义十三香",
+            "金龙鱼", "鲁花", "福临门", "多力", "欧丽薇兰",
+            
+            // 进口与国际品牌
+            "雀巢", "达能", "家乐氏", "通用磨坊", "联合利华", "卡夫",
+            "乐事", "桂格", "瑞士莲", "好时", "奥利奥", "品客", "红牛", "Monster",
+            "明治", "安佳", "阿尔乐", "总统",
+            
+            // 健康与营养补充
+            "汤臣倍健", "Swisse", "善存", "安利", "GNC",
+            "OATLY", "星期零", "植物标签",
+            
+            // 地方特色与老字号
+            "广州酒家", "稻香村", "五芳斋", "知味观", "杏花楼", "沈大成",
+            "维他奶", "马迭尔", "冠生园", "稻香村", "功德林"
+        ];
+        
+        // 保存数据到本地存储
+        function saveDataToLocalStorage() {
+            localStorage.setItem('historicalFigures', JSON.stringify(historicalFigures));
+            localStorage.setItem('gameCharacters', JSON.stringify(gameCharacters));
+            localStorage.setItem('foodBrands', JSON.stringify(foodBrands));
+        }
+        
+        // 合并所有人物
+        const allCharacters = [...historicalFigures, ...gameCharacters];
+        
+        // 更新统计数字
+        function updateCounters() {
+            document.getElementById('historicalCount').textContent = historicalFigures.length;
+            document.getElementById('gameCharacterCount').textContent = gameCharacters.length;
+            document.getElementById('foodBrandCount').textContent = foodBrands.length;
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // 检查并添加新名称到数据库
+        function checkAndAddNewName(name) {
+            const nameLower = name.trim().toLowerCase();
+            
+            // 检查是否已存在于任何数据库中
+            const existsInFood = foodBrands.some(brand => 
+                brand.toLowerCase() === nameLower
+            );
+            
+            const existsInCharacters = allCharacters.some(char => 
+                char.toLowerCase() === nameLower
+            );
+            
+            if (existsInFood || existsInCharacters) {
+                return { added: false };
+            }
+            
+            // 询问用户这是食品品牌还是人物名称
+            const isFood = confirm(`"${name}" 不在数据库中，是否将其添加为食品品牌？\n取消则添加为人物名称`);
+            
+            if (isFood) {
+                foodBrands.push(name);
+                showNotification(`已添加新食品品牌: ${name}`);
+            } else {
+                // 默认添加到历史人物
+                historicalFigures.push(name);
+                showNotification(`已添加新人物名称: ${name}`);
+            }
+            
+            // 保存到本地存储
+            saveDataToLocalStorage();
+            
+            // 更新统计
+            updateCounters();
+            
+            return { added: true, isFood };
+        }
+        
+        // DOM元素
+        const inputName = document.getElementById('inputName');
+        const generateBtn = document.getElementById('generateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultArea = document.getElementById('resultArea');
+        const initialMessage = document.getElementById('initialMessage');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultName = document.getElementById('resultName');
+        const foodBrandEl = document.getElementById('foodBrand');
+        const characterNameEl = document.getElementById('characterName');
+        const saveBtn = document.getElementById('saveBtn');
+        const historyList = document.getElementById('historyList');
+        const favoritesList = document.getElementById('favoritesList');
+        
+        // 存储历史记录和收藏
+        let history = JSON.parse(localStorage.getItem('nameCombinationHistory') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('nameCombinationFavorites') || '[]');
+        
+        // 初始化粒子背景
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#6366f1" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#6366f1",
+                    opacity: 0.2,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 0.5 } },
+                    push: { particles_nb: 3 }
+                }
+            },
+            retina_detect: true
+        });
+        
+        // 渲染历史记录
+        function renderHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<p class="text-gray-500 text-center italic py-4">暂无记录</p>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 p-2 rounded-lg hover:bg-gray-100 transition-colors flex justify-between items-center';
+                div.innerHTML = `
+                    <span>${item.combination}</span>
+                    <button class="text-gray-400 hover:text-primary transition-colors text-sm" data-combination="${item.combination}" data-food="${item.food}" data-character="${item.character}">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                `;
+                historyList.appendChild(div);
+                
+                // 重新生成按钮事件
+                div.querySelector('button').addEventListener('click', function() {
+                    const combo = this.getAttribute('data-combination');
+                    const food = this.getAttribute('data-food');
+                    const character = this.getAttribute('data-character');
+                    showResult(combo, food, character);
+                });
+            });
+        }
+        
+        // 渲染收藏
+        function renderFavorites() {
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = '<p class="text-gray-500 text-center italic py-4">暂无收藏</p>';
+                return;
+            }
+            
+            favoritesList.innerHTML = '';
+            favorites.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'bg-yellow-50 p-2 rounded-lg hover:bg-yellow-100 transition-colors flex justify-between items-center';
+                div.innerHTML = `
+                    <span>${item.combination}</span>
+                    <button class="text-gray-400 hover:text-red-500 transition-colors text-sm" data-index="${index}">
+                        <i class="fa fa-trash-o"></i>
+                    </button>
+                `;
+                favoritesList.appendChild(div);
+                
+                // 删除收藏按钮事件
+                div.querySelector('button').addEventListener('click', function() {
+                    const idx = parseInt(this.getAttribute('data-index'));
+                    favorites.splice(idx, 1);
+                    localStorage.setItem('nameCombinationFavorites', JSON.stringify(favorites));
+                    renderFavorites();
+                });
+            });
+        }
+        
+        // 显示结果
+        function showResult(combination, food, character) {
+            initialMessage.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            
+            // 添加动画效果
+            resultName.classList.add('scale-90', 'opacity-0');
+            setTimeout(() => {
+                resultName.textContent = combination;
+                foodBrandEl.textContent = food;
+                characterNameEl.textContent = character;
+                resultName.classList.remove('scale-90', 'opacity-0');
+                resultName.classList.add('scale-100', 'opacity-100');
+            }, 300);
+            
+            // 更新收藏按钮状态
+            const isFavorite = favorites.some(item => item.combination === combination);
+            if (isFavorite) {
+                saveBtn.innerHTML = '<i class="fa fa-heart"></i><span>取消收藏</span>';
+                saveBtn.classList.remove('bg-accent');
+                saveBtn.classList.add('bg-red-500');
+            } else {
+                saveBtn.innerHTML = '<i class="fa fa-heart-o"></i><span>收藏这个组合</span>';
+                saveBtn.classList.remove('bg-red-500');
+                saveBtn.classList.add('bg-accent');
+            }
+            
+            // 添加到历史记录
+            addToHistory(combination, food, character);
+        }
+        
+        // 添加到历史记录
+        function addToHistory(combination, food, character) {
+            // 检查是否已存在，存在则移除
+            const existingIndex = history.findIndex(item => item.combination === combination);
+            if (existingIndex !== -1) {
+                history.splice(existingIndex, 1);
+            }
+            
+            // 添加到开头
+            history.unshift({ combination, food, character });
+            
+            // 限制历史记录数量
+            if (history.length > 10) {
+                history.pop();
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('nameCombinationHistory', JSON.stringify(history));
+            
+            // 重新渲染
+            renderHistory();
+        }
+        
+        // 随机生成组合
+        function generateRandomCombination(input = '') {
+            let food, character;
+            const inputTrimmed = input.trim();
+            
+            // 如果有输入
+            if (inputTrimmed) {
+                const inputLower = inputTrimmed.toLowerCase();
+                
+                // 检查输入是否是食品品牌
+                const matchedFood = foodBrands.find(brand => 
+                    brand.toLowerCase() === inputLower
+                );
+                
+                // 检查输入是否是人物
+                const matchedCharacter = allCharacters.find(char => 
+                    char.toLowerCase() === inputLower
+                );
+                
+                if (matchedFood) {
+                    // 输入是食品品牌，随机匹配人物
+                    food = matchedFood;
+                    character = allCharacters[Math.floor(Math.random() * allCharacters.length)];
+                } else if (matchedCharacter) {
+                    // 输入是人物，随机匹配食品品牌
+                    food = foodBrands[Math.floor(Math.random() * foodBrands.length)];
+                    character = matchedCharacter;
+                } else {
+                    // 没有匹配，添加到数据库
+                    const { added, isFood } = checkAndAddNewName(inputTrimmed);
+                    
+                    if (isFood) {
+                        // 新添加的是食品品牌
+                        food = inputTrimmed;
+                        character = allCharacters[Math.floor(Math.random() * allCharacters.length)];
+                    } else {
+                        // 新添加的是人物
+                        food = foodBrands[Math.floor(Math.random() * foodBrands.length)];
+                        character = inputTrimmed;
+                    }
+                }
+            } else {
+                // 完全随机
+                food = foodBrands[Math.floor(Math.random() * foodBrands.length)];
+                character = allCharacters[Math.floor(Math.random() * allCharacters.length)];
+            }
+            
+            const combination = `${food}${character}`;
+            return { combination, food, character };
+        }
+        
+        // 生成按钮点击事件
+        generateBtn.addEventListener('click', () => {
+            const { combination, food, character } = generateRandomCombination(inputName.value);
+            showResult(combination, food, character);
+            
+            // 添加按钮动画
+            generateBtn.classList.add('scale-95');
+            setTimeout(() => {
+                generateBtn.classList.remove('scale-95');
+            }, 200);
+        });
+        
+        // 清空按钮点击事件
+        clearBtn.addEventListener('click', () => {
+            inputName.value = '';
+            inputName.focus();
+        });
+        
+        // 输入框回车事件
+        inputName.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+        
+        // 收藏按钮点击事件
+        saveBtn.addEventListener('click', () => {
+            const combination = resultName.textContent;
+            const food = foodBrandEl.textContent;
+            const character = characterNameEl.textContent;
+            
+            // 检查是否已收藏
+            const isFavorite = favorites.some(item => item.combination === combination);
+            if (isFavorite) {
+                // 已收藏，取消收藏
+                const index = favorites.findIndex(item => item.combination === combination);
+                favorites.splice(index, 1);
+                saveBtn.innerHTML = '<i class="fa fa-heart-o"></i><span>收藏这个组合</span>';
+                saveBtn.classList.remove('bg-red-500');
+                saveBtn.classList.add('bg-accent');
+            } else {
+                // 未收藏，添加收藏
+                favorites.push({ combination, food, character });
+                saveBtn.innerHTML = '<i class="fa fa-heart"></i><span>取消收藏</span>';
+                saveBtn.classList.remove('bg-accent');
+                saveBtn.classList.add('bg-red-500');
+                
+                // 添加动画效果
+                saveBtn.classList.add('animate-pulse');
+                setTimeout(() => {
+                    saveBtn.classList.remove('animate-pulse');
+                }, 1000);
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('nameCombinationFavorites', JSON.stringify(favorites));
+            
+            // 重新渲染
+            renderFavorites();
+        });
+        
+        // 热门推荐点击事件
+        document.querySelectorAll('.flex-wrap.gap-2 button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                inputName.value = btn.textContent;
+                generateBtn.click();
+            });
+        });
+        
+        // 初始化页面
+        updateCounters();
+        renderHistory();
+        renderFavorites();
+        
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.body.classList.add('opacity-0');
+            setTimeout(() => {
+                document.body.classList.remove('opacity-0');
+                document.body.classList.add('transition-opacity', 'duration-1000', 'opacity-100');
+            }, 100);
+        });
+    </script>
+</body>
+</html>
+    
