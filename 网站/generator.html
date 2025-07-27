@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创意名字生成器 - 生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1F2937',
+                        light: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            }
+            .transition-custom {
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .pulse-effect {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans text-dark overflow-x-hidden">
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 bg-glass shadow-md transition-custom">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="bg-white p-2 rounded-full shadow">
+                        <i class="fa fa-magic text-2xl text-accent"></i>
+                    </div>
+                    <span class="font-bold text-xl text-primary">创意名字生成器</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="font-medium text-gray-600 hover:text-primary transition-custom">首页</a>
+                    <a href="generator.html" class="font-medium text-primary border-b-2 border-primary">生成器</a>
+                    <a href="examples.html" class="font-medium text-gray-600 hover:text-primary transition-custom">名字库</a>
+                    <a href="about.html" class="font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-gray-700 text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col gap-3">
+                <a href="index.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">首页</a>
+                <a href="generator.html" class="py-2 font-medium text-primary">生成器</a>
+                <a href="examples.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">名字库</a>
+                <a href="about.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="container mx-auto px-4 py-16 max-w-4xl">
+        <!-- 页面标题 -->
+        <section class="text-center mb-12">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-primary mb-4">
+                名字生成器
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                输入饮料品牌或历史人物，生成独特的组合名字，或直接随机生成
+            </p>
+        </section>
+        
+        <!-- 主功能区 -->
+        <main class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-16 transform hover:shadow-2xl transition-custom">
+            <!-- 输入区域 -->
+            <div class="mb-8">
+                <label for="userInput" class="block text-gray-700 font-medium mb-2 text-lg">
+                    请输入饮料品牌或历史人物:
+                </label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="例如：可乐 或 关羽" 
+                        class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-custom"
+                    >
+                    <button 
+                        id="generateBtn" 
+                        class="bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg flex items-center justify-center gap-2 transform hover:scale-105 transition-custom"
+                    >
+                        <i class="fa fa-refresh"></i>
+                        <span>生成名字</span>
+                    </button>
+                </div>
+                <p class="text-gray-500 text-sm mt-2 italic">
+                    提示：输入"q"可以清除内容，尝试输入"旺仔"、"刘备"等
+                </p>
+            </div>
+            
+            <!-- 一键随机生成按钮 -->
+            <div class="mb-8">
+                <button 
+                    id="randomBtn" 
+                    class="w-full bg-accent hover:bg-accent/90 text-white font-medium px-6 py-3 rounded-lg flex items-center justify-center gap-2 transform hover:scale-[1.02] transition-custom pulse-effect"
+                >
+                    <i class="fa fa-random"></i>
+                    <span>一键随机生成</span>
+                </button>
+                <p class="text-gray-500 text-sm mt-2 italic text-center">
+                    点击此按钮直接生成5个随机组合，可多次点击刷新
+                </p>
+            </div>
+            
+            <!-- 历史记录区域 -->
+            <div id="historySection" class="mb-8 hidden">
+                <h3 class="text-gray-700 font-medium mb-3 text-lg flex items-center">
+                    <i class="fa fa-history text-gray-500 mr-2"></i>
+                    历史记录
+                </h3>
+                <div id="historyList" class="bg-gray-50 p-4 rounded-lg">
+                    <!-- 历史记录将通过JavaScript动态插入 -->
+                </div>
+                <button id="clearHistoryBtn" class="text-sm text-gray-500 hover:text-red-500 mt-2 transition-custom">
+                    <i class="fa fa-trash-o mr-1"></i> 清除历史
+                </button>
+            </div>
+            
+            <!-- 结果展示区域 -->
+            <div id="results" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fa fa-star text-accent mr-2"></i>生成的名字
+                    </h2>
+                    <button id="copyBtn" class="text-primary hover:text-primary/80 text-sm flex items-center gap-1 transition-custom">
+                        <i class="fa fa-copy"></i>
+                        <span>复制全部</span>
+                    </button>
+                </div>
+                
+                <div id="namesList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 名字将通过JavaScript动态插入 -->
+                </div>
+            </div>
+            
+            <!-- 错误提示区域 -->
+            <div id="error" class="hidden bg-red-50 border-l-4 border-red-400 p-4 rounded">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fa fa-exclamation-circle text-red-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700" id="errorMessage"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- 生成技巧 -->
+        <section class="mb-16 bg-white rounded-2xl shadow-xl p-6 md:p-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">
+                <i class="fa fa-lightbulb-o text-accent mr-2"></i>生成技巧
+            </h2>
+            <ul class="space-y-3 text-gray-600">
+                <li class="flex items-start gap-3">
+                    <i class="fa fa-check-circle text-secondary mt-1"></i>
+                    <span>尝试输入不同类型的饮料，如碳酸饮料、茶饮料、乳制品等</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa fa-check-circle text-secondary mt-1"></i>
+                    <span>历史人物可以是古代名人、文学作品角色或历史事件中的人物</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa fa-check-circle text-secondary mt-1"></i>
+                    <span>多次点击随机生成按钮，可能会有意想不到的有趣组合</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fa fa-check-circle text-secondary mt-1"></i>
+                    <span>生成的名字可用于创意写作、游戏角色命名、社交账号昵称等</span>
+                </li>
+            </ul>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white p-2 rounded-full">
+                            <i class="fa fa-magic text-xl text-accent"></i>
+                        </div>
+                        <span class="font-bold text-xl">创意名字生成器</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        探索饮料与历史人物的奇妙组合，创造独一无二的趣味名字
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-wechat text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-custom">首页</a></li>
+                        <li><a href="generator.html" class="text-gray-400 hover:text-white transition-custom">生成器</a></li>
+                        <li><a href="examples.html" class="text-gray-400 hover:text-white transition-custom">名字库</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white transition-custom">关于我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">资源</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">使用教程</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">反馈建议</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">订阅更新</h3>
+                    <p class="text-gray-400 mb-4">获取最新功能和名字灵感</p>
+                    <div class="flex">
+                        <input type="email" placeholder="你的邮箱地址" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-dark">
+                        <button class="bg-primary hover:bg-primary/90 px-4 py-2 rounded-r-lg transition-custom">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2023 创意名字生成器 版权所有 | 饮料与历史人物的奇妙组合</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 数据和逻辑脚本 -->
+    <script>
+        // 饮料列表
+        const drinks = [
+            "可乐", "雪碧", "芬达", "七喜", "美年",
+            "旺仔", "红牛", "脉动", "尖叫", "激活",
+            "营养", "快线", "阿萨姆", "加多", "王老",
+            "椰树", "露露", "六个", "核桃", "养乐",
+            "农夫", "怡宝", "冰峰", "健力", "乐虎",
+            "魔爪", "水溶", "优酸", "蒙牛", "伊利",
+            "光明", "君乐", "三元", "完达", "燕塘",
+            "风行", "皇氏", "天润", "西域", "李子",
+            "奈雪", "喜茶", "蜜雪", "茶颜", "书亦",
+            "古茗", "沪上", "益禾", "CoCo", "一点点",
+            "旺旺", "徐福", "金丝", "喜之", "康师",
+            "统一", "今麦", "白象", "日清", "南方",
+            "北方", "雅士", "贝因", "多美", "明治",
+            "安佳", "德运", "海河", "卫岗", "均瑶", "夏进"
+        ];
+        
+        // 历史人物列表（以三国人物为主）
+        const historicalFigures = [
+            // 三国主要人物
+            "刘备", "关羽", "张飞", "赵云", "马超",
+            "黄忠", "诸葛亮", "庞统", "法正", "魏延",
+            "姜维", "刘禅", "曹操", "曹丕", "曹植",
+            "郭嘉", "荀彧", "荀攸", "贾诩", "程昱",
+            "夏侯惇", "夏侯渊", "张辽", "张郃", "徐晃",
+            "许褚", "典韦", "孙权", "孙策", "孙坚",
+            "周瑜", "鲁肃", "吕蒙", "陆逊", "黄盖",
+            "程普", "太史慈", "甘宁", "周泰", "吕布",
+            "貂蝉", "袁绍", "袁术", "刘表", "刘璋",
+            "马腾", "董卓", "李儒", "陈宫", "颜良",
+            "文丑", "华雄", "孟获", "祝融", "蒋琬",
+            "费祎", "马谡", "马岱", "王平", "邓艾",
+            "钟会", "羊祜", "陆抗", "诸葛恪", "小乔",
+            "大乔", "甄姬", "蔡文姬", "孙尚香", "糜夫人",
+            
+            // 其他历史人物
+            "孔子", "孟子", "老子", "庄子", "墨子",
+            "荀子", "孙子", "屈原", "刘邦", "项羽",
+            "韩信", "张良", "萧何", "西施", "王昭君",
+            "杨玉环", "李白", "杜甫", "白居易", "苏轼"
+        ];
+        
+        // DOM元素
+        const userInput = document.getElementById('userInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const results = document.getElementById('results');
+        const namesList = document.getElementById('namesList');
+        const error = document.getElementById('error');
+        const errorMessage = document.getElementById('errorMessage');
+        const copyBtn = document.getElementById('copyBtn');
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const historySection = document.getElementById('historySection');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        
+        // 移动端菜单切换
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 生成名字函数（根据输入）
+        function generateNames(input) {
+            // 清除之前的结果和错误信息
+            results.classList.add('hidden');
+            error.classList.add('hidden');
+            namesList.innerHTML = '';
+            
+            // 如果输入是'q'，清除输入框
+            if (input.toLowerCase() === 'q') {
+                userInput.value = '';
+                return;
+            }
+            
+            let names = [];
+            
+            // 检查输入是否为饮料
+            if (drinks.includes(input)) {
+                // 随机选择5个不同的历史人物
+                const usedFigures = new Set();
+                while (names.length < 5 && usedFigures.size < historicalFigures.length) {
+                    const randomIndex = Math.floor(Math.random() * historicalFigures.length);
+                    const figure = historicalFigures[randomIndex];
+                    
+                    if (!usedFigures.has(figure)) {
+                        usedFigures.add(figure);
+                        names.push(`${input}${figure}`);
+                    }
+                }
+            } 
+            // 检查输入是否为历史人物
+            else if (historicalFigures.includes(input)) {
+                // 随机选择5个不同的饮料
+                const usedDrinks = new Set();
+                while (names.length < 5 && usedDrinks.size < drinks.length) {
+                    const randomIndex = Math.floor(Math.random() * drinks.length);
+                    const drink = drinks[randomIndex];
+                    
+                    if (!usedDrinks.has(drink)) {
+                        usedDrinks.add(drink);
+                        names.push(`${drink}${input}`);
+                    }
+                }
+            } 
+            // 输入不在任何列表中
+            else {
+                errorMessage.textContent = `抱歉，"${input}"不在我们的数据库中，请尝试其他内容。`;
+                error.classList.remove('hidden');
+                return;
+            }
+            
+            // 显示生成的名字
+            displayNames(names);
+            // 保存到历史记录
+            saveToHistory(names, input);
+        }
+        
+        // 随机生成名字函数（不基于输入）
+        function generateRandomNames() {
+            // 清除之前的结果和错误信息
+            results.classList.add('hidden');
+            error.classList.add('hidden');
+            namesList.innerHTML = '';
+            
+            let names = [];
+            const usedPairs = new Set(); // 用于确保组合不重复
+            
+            // 生成5个不重复的随机组合
+            while (names.length < 5 && usedPairs.size < drinks.length * historicalFigures.length) {
+                const drinkIndex = Math.floor(Math.random() * drinks.length);
+                const figureIndex = Math.floor(Math.random() * historicalFigures.length);
+                const pairKey = `${drinkIndex}-${figureIndex}`; // 用于标识唯一组合
+                
+                if (!usedPairs.has(pairKey)) {
+                    usedPairs.add(pairKey);
+                    const drink = drinks[drinkIndex];
+                    const figure = historicalFigures[figureIndex];
+                    names.push(`${drink}${figure}`);
+                }
+            }
+            
+            // 显示生成的名字
+            displayNames(names);
+            // 保存到历史记录
+            saveToHistory(names, '随机生成');
+        }
+        
+        // 显示名字的通用函数
+        function displayNames(names) {
+            if (names.length > 0) {
+                names.forEach((name, index) => {
+                    const nameElement = document.createElement('div');
+                    nameElement.className = 'bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100 flex items-center gap-3 hover:shadow-md transition-custom opacity-0 translate-y-4';
+                    nameElement.innerHTML = `
+                        <span class="bg-primary/10 text-primary w-7 h-7 rounded-full flex items-center justify-center font-medium text-sm">${index + 1}</span>
+                        <span class="font-medium">${name}</span>
+                    `;
+                    namesList.appendChild(nameElement);
+                });
+                
+                results.classList.remove('hidden');
+                
+                // 添加动画效果
+                const nameElements = namesList.querySelectorAll('div');
+                nameElements.forEach((el, i) => {
+                    setTimeout(() => {
+                        el.classList.add('opacity-100', 'translate-y-0');
+                        el.classList.remove('opacity-0', 'translate-y-4');
+                    }, 100 * i);
+                });
+            }
+        }
+        
+        // 复制全部名字到剪贴板
+        function copyToClipboard() {
+            const nameElements = namesList.querySelectorAll('span:last-child');
+            const names = Array.from(nameElements).map(el => el.textContent).join('\n');
+            
+            navigator.clipboard.writeText(names).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa fa-check"></i><span>已复制</span>';
+                copyBtn.classList.add('text-secondary');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('text-secondary');
+                }, 2000);
+            });
+        }
+        
+        // 保存到历史记录
+        function saveToHistory(names, source) {
+            // 从localStorage获取历史记录
+            let history = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
+            
+            // 添加新记录
+            const newRecord = {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                source: source,
+                names: names
+            };
+            
+            // 限制历史记录数量为10条
+            history.unshift(newRecord);
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('nameGeneratorHistory', JSON.stringify(history));
+            
+            // 更新历史记录显示
+            displayHistory();
+        }
+        
+        // 显示历史记录
+        function displayHistory() {
+            // 从localStorage获取历史记录
+            const history = JSON.parse(localStorage.getItem('nameGeneratorHistory') || '[]');
+            
+            if (history.length === 0) {
+                historySection.classList.add('hidden');
+                return;
+            }
+            
+            // 显示历史记录区域
+            historySection.classList.remove('hidden');
+            historyList.innerHTML = '';
+            
+            // 添加历史记录项
+            history.forEach(record => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'mb-4 pb-4 border-b border-gray-200 last:border-0 last:mb-0 last:pb-0';
+                
+                historyItem.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">${record.source}</span>
+                        <span class="text-xs text-gray-500">${record.timestamp}</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        ${record.names.map(name => `<span class="text-xs bg-gray-100 px-2 py-1 rounded">${name}</span>`).join('')}
+                    </div>
+                `;
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // 清除历史记录
+        function clearHistory() {
+            localStorage.removeItem('nameGeneratorHistory');
+            displayHistory();
+        }
+        
+        // 事件监听
+        generateBtn.addEventListener('click', () => {
+            const input = userInput.value.trim();
+            if (input) {
+                generateNames(input);
+            } else {
+                errorMessage.textContent = '请输入饮料品牌或历史人物名称';
+                error.classList.remove('hidden');
+            }
+        });
+        
+        randomBtn.addEventListener('click', generateRandomNames);
+        
+        // 回车键触发生成
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+        
+        copyBtn.addEventListener('click', copyToClipboard);
+        
+        // 清除历史记录按钮事件
+        clearHistoryBtn.addEventListener('click', clearHistory);
+        
+        // 页面滚动时改变导航栏样式
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
+            }
+        });
+        
+        // 页面加载时显示历史记录
+        window.addEventListener('DOMContentLoaded', displayHistory);
+    </script>
+</body>
+</html>

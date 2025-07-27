@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创意名字生成器 - 名字库</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1F2937',
+                        light: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            }
+            .transition-custom {
+                transition: all 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans text-dark overflow-x-hidden">
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 bg-glass shadow-md transition-custom">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="bg-white p-2 rounded-full shadow">
+                        <i class="fa fa-magic text-2xl text-accent"></i>
+                    </div>
+                    <span class="font-bold text-xl text-primary">创意名字生成器</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="font-medium text-gray-600 hover:text-primary transition-custom">首页</a>
+                    <a href="generator.html" class="font-medium text-gray-600 hover:text-primary transition-custom">生成器</a>
+                    <a href="examples.html" class="font-medium text-primary border-b-2 border-primary">名字库</a>
+                    <a href="about.html" class="font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-gray-700 text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col gap-3">
+                <a href="index.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">首页</a>
+                <a href="generator.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">生成器</a>
+                <a href="examples.html" class="py-2 font-medium text-primary">名字库</a>
+                <a href="about.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="container mx-auto px-4 py-16 max-w-6xl">
+        <!-- 页面标题 -->
+        <section class="text-center mb-12">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-primary mb-4">
+                名字库
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                浏览我们精选的创意名字组合，按类别筛选，找到你喜欢的名字
+            </p>
+        </section>
+        
+        <!-- 筛选区域 -->
+        <section class="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-12">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="searchInput" class="block text-gray-700 font-medium mb-2">
+                        搜索名字
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="输入关键词搜索..." 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-custom pl-10"
+                        >
+                        <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+                
+                <div class="w-full md:w-48">
+                    <label for="categoryFilter" class="block text-gray-700 font-medium mb-2">
+                        按类别筛选
+                    </label>
+                    <select 
+                        id="categoryFilter" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-custom appearance-none bg-white"
+                    >
+                        <option value="all">所有类别</option>
+                        <option value="sanguo">三国人物</option>
+                        <option value="ancient">古代名人</option>
+                        <option value="drink1">碳酸饮料</option>
+                        <option value="drink2">茶饮料</option>
+                        <option value="drink3">乳制品</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 名字库内容 -->
+        <section class="mb-16">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-semibold text-gray-800">
+                    <i class="fa fa-th text-accent mr-2"></i>精选名字组合
+                </h2>
+                <div class="text-gray-600">
+                    共 <span id="namesCount" class="font-medium text-primary">120</span> 个名字
+                </div>
+            </div>
+            
+            <div id="namesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                <!-- 名字将通过JavaScript动态插入 -->
+            </div>
+            
+            <!-- 加载更多按钮 -->
+            <div class="text-center mt-10">
+                <button id="loadMoreBtn" class="bg-white hover:bg-gray-50 text-primary border border-primary font-medium px-6 py-3 rounded-lg flex items-center gap-2 mx-auto transform hover:scale-105 transition-custom">
+                    <span>加载更多</span>
+                    <i class="fa fa-refresh"></i>
+                </button>
+            </div>
+        </section>
+        
+        <!-- 分类浏览 -->
+        <section class="mb-16">
+            <h2 class="text-xl font-semibold text-gray-800 mb-6">
+                <i class="fa fa-folder-open text-accent mr-2"></i>按分类浏览
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="h-40 bg-gradient-to-r from-primary to-blue-400 flex items-center justify-center">
+                        <i class="fa fa-bottle text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">饮料分类</h3>
+                        <p class="text-gray-600 mb-4">按饮料类型浏览相关名字组合</p>
+                        <ul class="space-y-2 mb-4">
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">碳酸饮料 (32)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">茶饮料 (28)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">乳制品 (25)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">果汁饮料 (21)</a></li>
+                        </ul>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-custom">查看全部 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="h-40 bg-gradient-to-r from-accent to-orange-400 flex items-center justify-center">
+                        <i class="fa fa-history text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">历史人物分类</h3>
+                        <p class="text-gray-600 mb-4">按历史时期浏览相关名字组合</p>
+                        <ul class="space-y-2 mb-4">
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">三国人物 (45)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">唐宋名人 (32)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">古代思想家 (28)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">历史美女 (21)</a></li>
+                        </ul>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-custom">查看全部 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-custom">
+                    <div class="h-40 bg-gradient-to-r from-secondary to-green-400 flex items-center justify-center">
+                        <i class="fa fa-star text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-semibold text-lg mb-2">热门推荐</h3>
+                        <p class="text-gray-600 mb-4">最受欢迎的名字组合</p>
+                        <ul class="space-y-2 mb-4">
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">创意昵称 (50)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">游戏角色名 (42)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">宠物名字 (36)</a></li>
+                            <li><a href="#" class="text-primary hover:text-primary/80 transition-custom">团队名称 (28)</a></li>
+                        </ul>
+                        <a href="#" class="text-primary hover:text-primary/80 font-medium transition-custom">查看全部 <i class="fa fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white p-2 rounded-full">
+                            <i class="fa fa-magic text-xl text-accent"></i>
+                        </div>
+                        <span class="font-bold text-xl">创意名字生成器</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        探索饮料与历史人物的奇妙组合，创造独一无二的趣味名字
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-wechat text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-custom">首页</a></li>
+                        <li><a href="generator.html" class="text-gray-400 hover:text-white transition-custom">生成器</a></li>
+                        <li><a href="examples.html" class="text-gray-400 hover:text-white transition-custom">名字库</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white transition-custom">关于我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">资源</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">使用教程</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">反馈建议</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">订阅更新</h3>
+                    <p class="text-gray-400 mb-4">获取最新功能和名字灵感</p>
+                    <div class="flex">
+                        <input type="email" placeholder="你的邮箱地址" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-dark">
+                        <button class="bg-primary hover:bg-primary/90 px-4 py-2 rounded-r-lg transition-custom">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2023 创意名字生成器 版权所有 | 饮料与历史人物的奇妙组合</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 脚本 -->
+    <script>
+        // 示例名字数据
+        const nameExamples = [
+            { name: "旺仔小乔", category: ["sanguo", "drink3"] },
+            { name: "可乐刘备", category: ["sanguo", "drink1"] },
+            { name: "雪碧关羽", category: ["sanguo", "drink1"] },
+            { name: "红牛张飞", category: ["sanguo", "drink1"] },
+            { name: "脉动赵云", category: ["sanguo", "drink1"] },
+            { name: "奈雪曹操", category: ["sanguo", "drink2"] },
+            { name: "喜茶孙权", category: ["sanguo", "drink2"] },
+            { name: "蜜雪周瑜", category: ["sanguo", "drink2"] },
+            { name: "椰树吕布", category: ["sanguo", "drink1"] },
+            { name: "露露貂蝉", category: ["sanguo", "drink3"] },
+            { name: "加多孔子", category: ["ancient", "drink1"] },
+            { name: "王老孟子", category: ["ancient", "drink2"] },
+            { name: "六个老子", category: ["ancient", "drink3"] },
+            { name: "营养庄子", category: ["ancient", "drink3"] },
+            { name: "优酸墨子", category: ["ancient", "drink3"] },
+            { name: "美年荀子", category: ["ancient", "drink1"] },
+            { name: "七喜孙子", category: ["ancient", "drink1"] },
+            { name: "芬达屈原", category: ["ancient", "drink1"] },
+            { name: "健力刘邦", category: ["ancient", "drink1"] },
+            { name: "乐虎项羽", category: ["ancient", "drink1"] },
+            { name: "魔爪韩信", category: ["ancient", "drink1"] },
+            { name: "水溶张良", category: ["ancient", "drink1"] },
+            { name: "冰峰萧何", category: ["ancient", "drink1"] },
+            { name: "农夫西施", category: ["ancient", "drink1"] },
+            { name: "怡宝王昭君", category: ["ancient", "drink1"] },
+            { name: "君乐杨玉环", category: ["ancient", "drink3"] },
+            { name: "蒙牛李白", category: ["ancient", "drink3"] },
+            { name: "伊利杜甫", category: ["ancient", "drink3"] },
+            { name: "光明白居易", category: ["ancient", "drink3"] },
+            { name: "皇氏苏轼", category: ["ancient", "drink3"] },
+            { name: "天润诸葛亮", category: ["sanguo", "drink3"] },
+            { name: "西域庞统", category: ["sanguo", "drink2"] },
+            { name: "李子法正", category: ["sanguo", "drink2"] },
+            { name: "古茗魏延", category: ["sanguo", "drink2"] },
+            { name: "沪上姜维", category: ["sanguo", "drink2"] },
+            { name: "益禾刘禅", category: ["sanguo", "drink2"] },
+            { name: "CoCo曹丕", category: ["sanguo", "drink2"] },
+            { name: "一点点曹植", category: ["sanguo", "drink2"] },
+            { name: "旺旺郭嘉", category: ["sanguo", "drink3"] },
+            { name: "徐福荀彧", category: ["sanguo", "drink3"] },
+            { name: "金丝荀攸", category: ["sanguo", "drink3"] },
+            { name: "喜之贾诩", category: ["sanguo", "drink3"] },
+            { name: "康师程昱", category: ["sanguo", "drink2"] },
+            { name: "统一夏侯惇", category: ["sanguo", "drink2"] },
+            { name: "今麦夏侯渊", category: ["sanguo", "drink2"] },
+            { name: "白象张辽", category: ["sanguo", "drink2"] },
+            { name: "日清张郃", category: ["sanguo", "drink2"] },
+            { name: "南方徐晃", category: ["sanguo", "drink2"] }
+        ];
+        
+        // DOM元素
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const namesGrid = document.getElementById('namesGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const namesCount = document.getElementById('namesCount');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        
+        // 当前显示的名字数量
+        let displayedCount = 30;
+        
+        // 移动端菜单切换
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 渲染名字列表
+        function renderNames(filteredNames = null) {
+            const namesToRender = filteredNames || nameExamples.slice(0, displayedCount);
+            
+            // 清空网格
+            namesGrid.innerHTML = '';
+            
+            // 添加名字
+            namesToRender.forEach(nameObj => {
+                const nameElement = document.createElement('div');
+                nameElement.className = 'bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1 cursor-pointer';
+                nameElement.textContent = nameObj.name;
+                namesGrid.appendChild(nameElement);
+            });
+            
+            // 更新计数
+            namesCount.textContent = filteredNames ? filteredNames.length : nameExamples.length;
+            
+            // 控制加载更多按钮显示
+            if (displayedCount >= nameExamples.length && !filteredNames) {
+                loadMoreBtn.classList.add('hidden');
+            } else {
+                loadMoreBtn.classList.remove('hidden');
+            }
+        }
+        
+        // 筛选名字
+        function filterNames() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const category = categoryFilter.value;
+            
+            let filtered = nameExamples;
+            
+            // 按搜索词筛选
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // 按类别筛选
+            if (category !== 'all') {
+                filtered = filtered.filter(item => 
+                    item.category.includes(category)
+                );
+            }
+            
+            renderNames(filtered);
+        }
+        
+        // 加载更多
+        function loadMoreNames() {
+            displayedCount += 20;
+            renderNames();
+        }
+        
+        // 事件监听
+        searchInput.addEventListener('input', filterNames);
+        categoryFilter.addEventListener('change', filterNames);
+        loadMoreBtn.addEventListener('click', loadMoreNames);
+        
+        // 页面滚动时改变导航栏样式
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
+            }
+        });
+        
+        // 页面加载时渲染名字
+        window.addEventListener('DOMContentLoaded', () => {
+            renderNames();
+        });
+    </script>
+</body>
+</html>

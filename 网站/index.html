@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创意名字生成器 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        dark: '#1F2937',
+                        light: '#F3F4F6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            }
+            .text-shadow-lg {
+                text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            }
+            .transition-custom {
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .bg-glass {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(8px);
+            }
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-20px); }
+                100% { transform: translateY(0px); }
+            }
+            .pulse-effect {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans text-dark overflow-x-hidden">
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 bg-glass shadow-md transition-custom">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="index.html" class="flex items-center gap-2">
+                    <div class="bg-white p-2 rounded-full shadow">
+                        <i class="fa fa-magic text-2xl text-accent"></i>
+                    </div>
+                    <span class="font-bold text-xl text-primary">创意名字生成器</span>
+                </a>
+                
+                <!-- 桌面导航 -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="index.html" class="font-medium text-primary border-b-2 border-primary">首页</a>
+                    <a href="generator.html" class="font-medium text-gray-600 hover:text-primary transition-custom">生成器</a>
+                    <a href="examples.html" class="font-medium text-gray-600 hover:text-primary transition-custom">名字库</a>
+                    <a href="about.html" class="font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+                </div>
+                
+                <!-- 移动端菜单按钮 -->
+                <button id="menuBtn" class="md:hidden text-gray-700 text-xl">
+                    <i class="fa fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 flex flex-col gap-3">
+                <a href="index.html" class="py-2 font-medium text-primary">首页</a>
+                <a href="generator.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">生成器</a>
+                <a href="examples.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">名字库</a>
+                <a href="about.html" class="py-2 font-medium text-gray-600 hover:text-primary transition-custom">关于我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 封面区域 -->
+    <header class="relative h-[85vh] flex items-center justify-center overflow-hidden">
+        <!-- 背景装饰元素 -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute bottom-1/3 right-1/3 w-80 h-80 bg-accent/20 rounded-full blur-3xl animate-float" style="animation-delay: 2s"></div>
+            <div class="absolute top-2/3 left-1/2 w-72 h-72 bg-secondary/20 rounded-full blur-3xl animate-float" style="animation-delay: 4s"></div>
+        </div>
+        
+        <!-- 封面内容 -->
+        <div class="container mx-auto px-4 z-10 text-center">
+            <div class="max-w-3xl mx-auto">
+                <div class="mb-6 inline-block">
+                    <div class="bg-white p-4 rounded-full shadow-lg">
+                        <i class="fa fa-magic text-5xl text-accent"></i>
+                    </div>
+                </div>
+                <h1 class="text-[clamp(2.5rem,8vw,5rem)] font-bold text-primary mb-6 leading-tight text-shadow-lg">
+                    创意名字<br class="hidden sm:block">生成器
+                </h1>
+                <p class="text-[clamp(1.1rem,3vw,1.5rem)] text-gray-700 mb-10 max-w-2xl mx-auto">
+                    探索饮料与历史人物的奇妙组合，创造独一无二的趣味名字
+                </p>
+                <a href="generator.html" class="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-full text-lg shadow-xl transform hover:scale-105 transition-custom flex items-center gap-2 mx-auto">
+                    <span>开始生成</span>
+                    <i class="fa fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 滚动提示 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fa fa-angle-double-down text-primary/70 text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <div class="container mx-auto px-4 py-16 max-w-6xl">
+        <!-- 特色介绍 -->
+        <section class="mb-20">
+            <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-center text-dark mb-16">
+                为什么选择我们的名字生成器
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-custom text-center transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa fa-bolt text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">快速生成</h3>
+                    <p class="text-gray-600">输入内容后一键生成，瞬间获得5个创意名字，无需等待</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-custom text-center transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa fa-random text-accent text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">随机灵感</h3>
+                    <p class="text-gray-600">一键随机生成功能，轻松获取意想不到的创意组合，激发灵感</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition-custom text-center transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fa fa-database text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-xl mb-3">丰富库资源</h3>
+                    <p class="text-gray-600">海量饮料与历史人物数据库，确保每次生成都有新的惊喜</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 功能预览 -->
+        <section class="mb-20 bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                    <h2 class="text-[clamp(1.5rem,4vw,2.2rem)] font-bold text-dark mb-6">
+                        简单三步，生成创意名字
+                    </h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">输入关键词</h3>
+                                <p class="text-gray-600">输入任意饮料品牌或历史人物名称，如"可乐"或"关羽"</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">生成名字</h3>
+                                <p class="text-gray-600">点击生成按钮，或直接使用随机生成功能获取创意组合</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                            <div>
+                                <h3 class="font-semibold text-lg mb-2">复制使用</h3>
+                                <p class="text-gray-600">一键复制所有生成的名字，应用到你的创意项目中</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-10">
+                        <a href="generator.html" class="inline-block bg-primary hover:bg-primary/90 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transform hover:scale-105 transition-custom">
+                            立即尝试 <i class="fa fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="bg-gray-100 p-4 flex items-center justify-center">
+                    <img src="https://picsum.photos/600/400" alt="名字生成器功能预览" class="rounded-lg shadow-lg max-w-full h-auto">
+                </div>
+            </div>
+        </section>
+        
+        <!-- 热门示例 -->
+        <section class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-dark mb-4">
+                    热门名字示例
+                </h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    看看其他人都在生成什么样的创意名字，点击查看更多
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">旺仔小乔</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">可乐刘备</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">雪碧关羽</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">红牛张飞</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">脉动赵云</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">奈雪曹操</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">喜茶孙权</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">蜜雪周瑜</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">椰树吕布</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">露露貂蝉</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">加多孔子</div>
+                <div class="bg-white p-4 rounded-lg shadow text-center hover:shadow-md transition-custom transform hover:-translate-y-1">王老孟子</div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a href="examples.html" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-custom">
+                    <span>查看更多示例</span>
+                    <i class="fa fa-long-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+        
+        <!-- 用户评价 -->
+        <section class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-dark mb-4">
+                    用户怎么说
+                </h2>
+                <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                    来自真实用户的反馈，看看他们如何使用我们的名字生成器
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center gap-1 text-accent mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"这个名字生成器太有趣了！我为我的小说角色找到了很多灵感，特别是饮料和历史人物的组合，非常有创意。"</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://picsum.photos/60/60?random=1" alt="用户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-medium">张小明</div>
+                            <div class="text-sm text-gray-500">小说家</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center gap-1 text-accent mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"作为一名营销人员，我经常需要为活动和产品想出有趣的名字。这个工具帮我省了很多时间，强烈推荐！"</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://picsum.photos/60/60?random=2" alt="用户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-medium">李雨晴</div>
+                            <div class="text-sm text-gray-500">市场营销</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-custom">
+                    <div class="flex items-center gap-1 text-accent mb-4">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-half-o"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">"我的孩子们很喜欢这个网站，他们花了一个下午生成各种有趣的名字，还学到了一些历史人物知识，一举两得！"</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://picsum.photos/60/60?random=3" alt="用户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-medium">王建国</div>
+                            <div class="text-sm text-gray-500">教师</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 行动召唤 -->
+        <section class="mb-16 text-center">
+            <div class="bg-gradient-to-r from-primary to-blue-700 rounded-3xl p-8 md:p-12 shadow-xl">
+                <h2 class="text-[clamp(1.8rem,5vw,2.5rem)] font-bold text-white mb-6">
+                    准备好生成你的创意名字了吗？
+                </h2>
+                <p class="text-white/90 text-lg max-w-2xl mx-auto mb-8">
+                    立即开始探索饮料与历史人物的奇妙组合，创造属于你的独特名字
+                </p>
+                <a href="generator.html" class="inline-block bg-white text-primary hover:bg-gray-100 font-semibold px-8 py-4 rounded-full text-lg shadow-lg transform hover:scale-105 transition-custom">
+                    立即生成 <i class="fa fa-magic ml-2"></i>
+                </a>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-white p-2 rounded-full">
+                            <i class="fa fa-magic text-xl text-accent"></i>
+                        </div>
+                        <span class="font-bold text-xl">创意名字生成器</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        探索饮料与历史人物的奇妙组合，创造独一无二的趣味名字
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-weibo text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-wechat text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-custom">
+                            <i class="fa fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">快速链接</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-400 hover:text-white transition-custom">首页</a></li>
+                        <li><a href="generator.html" class="text-gray-400 hover:text-white transition-custom">生成器</a></li>
+                        <li><a href="examples.html" class="text-gray-400 hover:text-white transition-custom">名字库</a></li>
+                        <li><a href="about.html" class="text-gray-400 hover:text-white transition-custom">关于我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">资源</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">使用教程</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">反馈建议</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-custom">联系我们</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-lg mb-4">订阅更新</h3>
+                    <p class="text-gray-400 mb-4">获取最新功能和名字灵感</p>
+                    <div class="flex">
+                        <input type="email" placeholder="你的邮箱地址" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-dark">
+                        <button class="bg-primary hover:bg-primary/90 px-4 py-2 rounded-r-lg transition-custom">
+                            <i class="fa fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2023 创意名字生成器 版权所有 | 饮料与历史人物的奇妙组合</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 脚本 -->
+    <script>
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = menuBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        
+        // 页面滚动时改变导航栏样式
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
+            }
+        });
+    </script>
+</body>
+</html>
